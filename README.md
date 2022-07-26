@@ -1,13 +1,13 @@
-# Rhapsody-Bot
+# AKA-Bot
 
 ```bash
 > pkg update && pkg upgrade
 
 > pkg install nodejs yarn ffmpeg imagemagick libwebp sox
 
-> git clone https://github.com/DEFF-Y/Rhapsody-Bot
+> git clone [https://github.com/osiafv/Aka-by-Riz]
 
-> cd Rhapsody-Bot
+> cd Aka-by-Riz
 
 > yarn
 
