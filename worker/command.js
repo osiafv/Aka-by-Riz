@@ -2482,9 +2482,8 @@ contextInfo: {
 "externalAdReply": { 
 "title" : global.namebot,
 "mediaType" : 1,
-"renderLargerThumbnail" : true , 
+"renderLargerThumbnail" : false , 
 "showAdAttribution": true, 
-"jpegThumbnail": fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),
 "mediaUrl": global.linkgrupss, 
 "thumbnail": fs.readFileSync('./worker/media/image/randomMenu/wpmobile2.png'),
 "sourceUrl" : global.linkgrupss 
@@ -2492,7 +2491,10 @@ contextInfo: {
 }
 
 sock.sendMessage(m.chat, buttonMessage, { quoted: m}) 
-				  
+				 break
+case prefix+'how':
+  teks = 'howw'
+  sock.sendMessage(from, { text : teks, contextInfo: {"externalAdReply": { title: "WHATSAPP BOT",mediaType: 3, renderLargerThumbnail: false , showAdAttribution: true, body: "🤫",jpegThumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),mediaUrl: global.linkgrupss, thumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),sourceUrl: global.linkgrupss }}},{ quoted : m})
 break
 /*case prefix+'menu': { Ini Menu location
 const dbs = new Database()
@@ -4339,7 +4341,9 @@ sock.sendMessage(m.chat, { image : { url : pporgs }, caption:`Done` }, { quoted 
 addCmd(command.slice(1), 1, commund)
 break
 case prefix+'owner': case prefix+'creator': {
-sock.sendContact(m.chat, global.owner, m)
+  for (let x of global.owner) {
+    sock.sendContact(from, global.owner , m)
+   }			   
 }
 addCmd(command.slice(1), 1, commund)
 break
@@ -4663,131 +4667,68 @@ sock.sendMessage(from, buttonMessage, {quoted:m})
 }
 addCmd(command.slice(1), 1, commund)
 break
-case prefix+'tt':{
-  if (args[0].includes('--help')) return reply(examlink) 
-  if (!args[0]) return reply('Linknya?')
-  if (!args[0].includes('tiktok')) return reply('Itu bukan link tiktok!')
-  const musim_rambutan = await TiktokDownloader(`${q}`).catch(e => {
-  reply('Eror Mamang') 
-  } )
-  try{
-   console.log(musim_rambutan)
-   const musim_duren_v = musim_rambutan.result.nowatermark
-   let buttons = [
-    {
-     buttonId: `#ttaudio ${args[0]}`, 
-     buttonText: {
-      displayText: 'Audio'
-    }, type: 1},
-  ]
-  let buttonMessage = {
-    video: { url: musim_duren_v },
-    caption: "Nih..",
-    footer: `Tekan tombol Dibawah Untuk Menjadikan Audio\n${global.author}`,
-    buttons: buttons,
-    headerType: 4
-   }
-   sock.sendMessage(from, buttonMessage, { quoted: m })
-  } catch (e) { e = String(e)
-    ads(from, 'Tidak ditemukan!', { quoted : m } )
-  }
+case prefix+'tt': case prefix+'ttdl': case prefix+'tiktok': case prefix+'ttmp4': case prefix+'ttmp3': case prefix+'tiktoknowm':{
+  if (q.includes('--help')) return reply(examlink) 
+  if (!q) return reply('Linknya?')
+  if (!q.includes('tiktok')) return reply('Itu bukan link tiktok!')
+  const options = {
+    method: 'GET',
+    url: 'https://download-videos-tiktok.p.rapidapi.com/tiktok',
+    params: {url: `${q}`},
+    headers: {
+      'X-RapidAPI-Key': '463dbc2754msh0edcce776730996p15e089jsnb8a3a15ca92d',
+      'X-RapidAPI-Host': 'download-videos-tiktok.p.rapidapi.com'
     }
+  };
+  
+  axios.request(options).then(function (response) {
+    console.log(response.data);
+    const musim_duren_as = response.data.itemData.video.no_watermark.hd.url
+    const musim_duren_stat = response.data.itemData.statistics
+       let buttons = [
+        {
+         buttonId: `#ttaudio ${q}`, 
+         buttonText: {
+          displayText: 'Audio'
+        }, type: 1},
+      ]
+      let buttonMessage = {
+        video: { url: musim_duren_as },
+        caption: `nih`,
+        footer: `Tekan tombol Dibawah Untuk Menjadikan Audio\n${global.namebot}`,
+        buttons: buttons,
+        headerType: 4,
+        contextInfo: {"externalAdReply": { title: "WHATSAPP BOT",mediaType: 3, renderLargerThumbnail: false , showAdAttribution: true, body: "🤫",jpegThumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),mediaUrl: global.linkgrupss, thumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),sourceUrl: global.linkgrupss }}}
+      
+       sock.sendMessage(from, buttonMessage, { quoted: m })
+    //sock.sendMessage(from, { video: { url: musim_duren_as }, caption: `Nih` }, { quoted: m })
+    //sock.sendMessage(from, { audio: { url: musim_duren_as }, mimetype: 'audio/mp4' }, { quoted: m }
+  })
+}
+addCmd(command.slice(1), 1, commund)
   break
   case prefix+'ttaudio':{
     if (args[0].includes('--help')) return ads(examlink) 
       if (!args[0]) return ads('Linknya?')
       if (!args[0].includes('tiktok')) return ads('Itu bukan link tiktok!')
-      const musim_rambutan = await TiktokDownloader(`${args[0]}`).catch(e => {
-     ads(`Eror Bwang`) 
-    } )
-       console.log(musim_rambutan)
-       const musim_duren_a = musim_rambutan.result.nowatermark
-        sock.sendMessage(from, { audio: { url: musim_duren_a }, mimetype: 'audio/mp4' }, { quoted: m })
-       }
+      const options = {
+        method: 'GET',
+        url: 'https://download-videos-tiktok.p.rapidapi.com/tiktok',
+        params: {url: `${q}`},
+        headers: {
+          'X-RapidAPI-Key': '463dbc2754msh0edcce776730996p15e089jsnb8a3a15ca92d',
+          'X-RapidAPI-Host': 'download-videos-tiktok.p.rapidapi.com'
+        }
+      };
+      
+      axios.request(options).then(function (response) {
+        console.log(response.data);
+        const musim_duren_a = response.data.itemData.video.no_watermark.hd.url
+        sock.sendMessage(from, { audio: { url: musim_duren_a }, mimetype: 'audio/mp4', contextInfo: {"externalAdReply": { title: "WHATSAPP BOT",mediaType: 3, renderLargerThumbnail: false , showAdAttribution: true, body: "🤫",jpegThumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),mediaUrl: global.linkgrupss, thumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),sourceUrl: global.linkgrupss }}}, { quoted: m })
+       })
+      }
+      addCmd(command.slice(1), 1, commund)
      break
-case prefix+'ttdl': case prefix+'tiktok': case prefix+'ttmp4': case prefix+'ttmp3': case prefix+'tiktoknowm': {
-if (isBan) return ads(mess.ban)
-if (!isUrl(args[0])) return ads(`Example :\n${command} <url>\nUses :\n${command} https://vt.tiktok.com/ZSdDo97dC/`)
-let res = await aiovideodl(args[0])
-if (isUrl(args[0])) {
-texttk = `*| TIKTOK DOWNLOADER |*
-
-Caption : ${res.title}
-Size : ${res.medias[1].formattedSize}
-Type : ${res.medias[1].extension ? "video/" + res.medias[1].extension : "undefined"}
-
-_Pilih watermak atau audio dan tunggu beberapa saat_`
-let buttons = [
-{buttonId: `${prefix}ttvd ${args[0]}}`, buttonText: {displayText: '× Watermak'}, type: 1},
-{buttonId: `${prefix}ttad ${args[0]}`, buttonText: {displayText: '♫ Audio'}, type: 1}
-]
-let buttonMessage = {
-video: {url:res.medias[1].url},
-caption: texttk,
-footer: global.footer,
-buttons: buttons,
-headerType: 4,
-contextInfo:{externalAdReply:{
-title:"  Tiktok Downloader",
-body:res.title,
-thumbnail: log0,
-mediaType:1,
-mediaUrl: args[0],
-sourceUrl: args[0]
-}}
-}
-sock.sendMessage(from, buttonMessage, {quoted:m})
-} else {
-ads("Link Error!")
-}
-}
-addCmd(command.slice(1), 1, commund)
-break
-case prefix+'ttad': {
-if (isBan) return ads(mess.ban)
-let res = await aiovideodl(args[0])
-sock.sendMessage(from, {audio:{url:res.medias[2].url}, mimetype:"audio/mp4", ptt:true, contextInfo:{externalAdReply:{
-title:"  Tiktok Downloader",
-body:res.title,
-thumbnail: log0,
-mediaType:1,
-mediaUrl: args[0],
-sourceUrl: args[0]
-}}}, {quoted:m})
-}
-addCmd(command.slice(1), 1, commund)
-break
-case prefix+'ttvd': {
-if (isBan) return ads(mess.ban)
-let res = await aiovideodl(args[0])
-texttk = `*| TIKTOK DOWNLOADER |*
-
-Caption : ${res.title}
-Size : ${res.medias[0].formattedSize}
-Type : ${res.medias[0].extension ? "video/" + res.medias[0].extension : "undefined"}
-
-_untuk melihat list menu pencet tombol dibawah atau ketik menu_`
-let buttons = [
-{buttonId: `${prefix}menu`, buttonText: {displayText: 'Menu'}, type: 1}
-]
-let buttonMessage = {
-video: {url:res.medias[0].url},
-caption: texttk,
-footer: global.footer,
-buttons: buttons,
-headerType: 4,
-contextInfo:{externalAdReply:{
-title:" = Tiktok Downloader",
-body:res.title,
-thumbnail: log0,
-mediaType:1,
-mediaUrl: args[0],
-sourceUrl: args[0]
-}}
-}
-sock.sendMessage(from, buttonMessage, {quoted:m})
-}
-addCmd(command.slice(1), 1, commund)
 break
 case prefix+'play': case prefix+'ytplay': {
 if (isBan) return ads(mess.ban)
