@@ -93,16 +93,16 @@ sock.ev.on('group-participants.update', async (update) =>{
             resolve(v.name || v.subject || PhoneNumber('+' + id.replace('@s.whatsapp.net', '')).getNumber('international'))
         })
     }
-    sock.sendContact = async (jid, kon, quoted = '', opts = {}) => {
-        let list = []
-        for (let i of kon) {
-            list.push({
-                displayName: await sock.getName(i + '@s.whatsapp.net'),
-                vcard: `BEGIN:VCARD\nVERSION:3.0\nN:${await sock.getName(i + '@s.whatsapp.net')}\nFN:${await sock.getName(i + '@s.whatsapp.net')}\nitem1.TEL;waid=${i}:${i}\nitem1.X-ABLabel:Ponsel\nitem2.EMAIL;type=INTERNET:${global.email}\nitem2.X-ABLabel:Email\nitem3.URL:${global.instagram}\nitem3.X-ABLabel:Instagram\nitem4.ADR:;;Indonesia;;;;\nitem4.X-ABLabel:Region\nEND:VCARD`
-            })
-        }
-        sock.sendMessage(jid, { contacts: { displayName: `${list.length} Kontak`, contacts: list }, ...opts }, { quoted })
-        }
+    sock.sendContact = (jid, numbers, name, quoted, mbuh) => {
+        let number = numbers.replace(/[^0-9]/g, '')
+        const vcard = 'BEGIN:VCARD\n' 
+        + 'VERSION:3.0\n' 
+        + 'FN:' + name + '\n'
+        + 'ORG:;\n'
+        + 'TEL;type=CELL;type=VOICE;waid=' + number + ':+' + number + '\n'
+        + 'END:VCARD'
+          return sock.sendMessage(jid, { contacts: { displayName: name, contacts: [{ vcard }] }, mentions : mbuh ? mbuh : []},{ quoted: quoted })
+      }
     
     sock.setStatus = (status) => {
         sock.query({
@@ -480,6 +480,16 @@ sock.send5Loc = async (jid , text = '' , footer = '', img, but = [], options = {
             }
             }), options)
             sock.relayMessage(jid, template.message, { messageId: template.key.id })
+    }
+    sock.sendButtonText = async (jid, buttons = [], text, footer, quoted = '', options = {}) => {
+        let buttonMessage = {
+            text,
+            footer,
+            buttons,
+            headerType: 2,
+            ...options
+        }
+        sock.sendMessage(jid, buttonMessage, { quoted, ...options })
     }
         sock.sendButDoc = async (jid , text = '' , footer = '', docu, ic, mi, logos, but = [], options = {}) =>{
         let mgDoc = await prepareWAMessageMedia({ document: docu, jpegThumbnail: logos, fileName: ic, mimetype: mi}, { upload: sock.waUploadToServer })

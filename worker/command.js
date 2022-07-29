@@ -12,6 +12,7 @@ const fs = require('fs')
 const util = require('util')
 const fetch = require('node-fetch')
 const chalk = require('chalk')
+const crypto = require('crypto')
 const { exec, spawn, execSync } = require("child_process")
 const axios = require('axios')
 const path = require('path')
@@ -72,8 +73,9 @@ let userHit = JSON.parse(fs.readFileSync('./worker/src/dashboard/userhit.json'))
 let db_respon_list = JSON.parse(fs.readFileSync('./worker/src/list/list.json'));
 let bad = JSON.parse(fs.readFileSync('./worker/src/Toxic/bad.json'))
 let mute = JSON.parse(fs.readFileSync('./worker/src/mute/mute.json'));
-const register = JSON.parse(fs.readFileSync('./worker/src/register/user.json'))
 const capuser = JSON.parse(fs.readFileSync('./worker/src/captcha/capuser.json'))
+const register = JSON.parse(fs.readFileSync('./worker/src/register/user.json'))
+let _registered = JSON.parse(fs.readFileSync('./worker/src/register/user.json'))
  const tebakkimia = fs.readFileSync('./worker/src/game/result/tebakkimia.json');
  const asahotak = fs.readFileSync('./worker/src/game/result/asahotak.json');
  const susunkata = fs.readFileSync('./worker/src/game/result/susunkata.json');
@@ -101,6 +103,7 @@ const _tebaklagu= JSON.parse(fs.readFileSync('./worker/src/game/dbgame/tebaklagu
 let tebakgambar = []
 let gamewaktu = 50
 let waktu = 60000
+var kuis = false
 
 global.db = JSON.parse(fs.readFileSync('./worker/src/database.json'))
 if (global.db) global.db = {
@@ -147,8 +150,8 @@ var thisHari = tgel.getDay(),
     thisDaye = myHari[thisHari];
 var yye = tgel.getYear();
 var syear = (yye < 1000) ? yye + 1900 : yye;
-const jangwak = (time2 + ' ' +thisDaye + ', ' + hri + '' + buln[bulnh] + '' + syear)
-const jangwuk =(hri + '' + buln[bulnh] + '' + syear)
+const jangwuk = (time2 + ' ' +thisDaye + ', ' + hri + '' + buln[bulnh] + '' + syear)
+const jangwak =(hri + '' + buln[bulnh] + '' + syear)
 const janghar = (thisDaye)
 const emo = ['❤', '😍', '😘', '💕', '😻', '💑', '👩‍❤‍👩', '👨‍❤‍👨', '💏', '👩‍❤‍💋‍👩', '👨‍❤‍💋‍👨', '🧡', '💛', '💚', '💙', '💜', '🖤', '💔', '❣', '💞', '💓', '💗', '💖', '💘', '💝', '💟', '♥', '💌', '💋', '👩‍❤️‍💋‍👩', '👨‍❤️‍💋‍👨', '👩‍❤️‍👨', '👩‍❤️‍👩', '👨‍❤️‍👨', '👩‍❤️‍💋‍👨', '👬', '👭', '👫', '🥰', '😚', '😙', '👄', '🌹', '😽', '❣️', '❤️', '😀', '😃', '😄', '😁', '😆', '😅', '😂', '🤣', '🙂', '😛', '😝', '😜', '🤪', '🤗', '😺', '😸', '😹', '☺', '😌', '😉', '🤗', '😊', '🎊', '🎉', '🎁', '🎈', '👯‍♂️', '👯', '👯‍♀️', '💃', '🕺', '🔥', '⭐️', '✨', '💫', '🎇', '🎆', '🍻', '🥂', '🍾', '🎂', '🍰', '☹', '😣', '😖', '😫', '😩', '😢', '😭', '😞', '😔', '😟', '😕', '😤', '😠', '😥', '😰', '😨', '😿', '😾', '😓', '🙍‍♂', '🙍‍♀', '💔', '🙁', '🥺', '🤕', '☔️', '⛈', '🌩', '🌧,😯', '😦', '😧', '😮', '😲', '🙀', '😱', '🤯', '😳', '❗', '❕', '🤬', '😡', '😠', '🙄', '👿', '😾', '😤', '💢', '👺', '🗯️', '😒', '🥵', '👋']
 const emojis = emo[Math.floor(Math.random() * (emo.length))]
@@ -163,11 +166,8 @@ module.exports = sock = async (sock, m, chatUpdate, store) => {
 try {
   var body = (m.mtype === 'conversation') ? m.message.conversation : (m.mtype == 'imageMessage') ? m.message.imageMessage.caption : (m.mtype == 'videoMessage') ? m.message.videoMessage.caption : (m.mtype == 'extendedTextMessage') ? m.message.extendedTextMessage.text : (m.mtype == 'buttonsResponseMessage') ? m.message.buttonsResponseMessage.selectedButtonId : (m.mtype == 'listResponseMessage') ? m.message.listResponseMessage.singleSelectReply.selectedRowId : (m.mtype == 'templateButtonReplyMessage') ? m.message.templateButtonReplyMessage.selectedId : (m.mtype === 'messageContextInfo') ? (m.message.buttonsResponseMessage?.selectedButtonId || m.message.listResponseMessage?.singleSelectReply.selectedRowId || m.text) : ''
         var budy = (typeof m.text == 'String' ? m.text : '')
-if (multipref) {
-var prefix = /^[°•π÷×¶∆£¢€¥®™✓_=|~!?#$%^&.+-,\/\\©^]/.test(body) ? body.match(/^[°•π÷×¶∆£¢€¥®™✓_=|~!?#$%^&.+-,\/\\©^]/gi) : '#'
-  } else if (oneprefix) {
-    prefix = preff
-  }
+        var prefix = /^[0-9°•π÷×¶∆£¢€¥®™✓_=|~!?#$%^&.+-,\/\\©^]/.test(body) ? body.match(/^[0-9°•π÷×¶∆£¢€¥®™✓_=|~!?#$%^&.+-,\/\\©^]/gi) : '#'
+        //var prefix = prefa ? /^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi.test(body) ? body.match(/^[°•π÷×¶∆£¢€¥®™+✓_=|~!?@#$%^&.©^]/gi)[0] : "" : prefa ?? global.prefix
 const allcmd = [`${prefix}menu`,`${prefix}sticker`,`${prefix}play`,`${prefix}addlist`,`${prefix}list`,`${prefix}cerpen`,`${prefix}ytmp3`,`${prefix}ytmp4`,`${prefix}ping`,`${prefix}dashboard`,`${prefix}updatelist`,`${prefix}dellist`,`${prefix}owner`,`${prefix}cowner`,`${prefix}tes`,`${prefix}linkgroup`,`${prefix}setppgc`,`${prefix}setname`,`${prefix}setdesc`,`${prefix}ephemeral`,`${prefix}hidetag`,`${prefix}tagall`,`${prefix}promote`,`${prefix}demote`,`${prefix}upvote`,`${prefix}cekvote`,`${prefix}hapusvote`,`${prefix}antilink`,`${prefix}welcome`,`${prefix}add`,`${prefix}kick`,`${prefix}revoke`,`${prefix}group`,`${prefix}editinfo`,`${prefix}ceksewa`,`${prefix}instagram`,`${prefix}tiktok`,`${prefix}facebook`,`${prefix}igstory`,`${prefix}jpeg`,`${prefix}mp4`,`${prefix}gimage`,`${prefix}ytsearch`,`${prefix}searchgc`,`${prefix}happymod`,`${prefix}servermc`,`${prefix}mcpedl`,`${prefix}google`,`${prefix}pinterest`,`${prefix}layarkaca-search`,`${prefix}smeme`,`${prefix}swm`,`${prefix}stickerwm`,`${prefix}emojimix`,`${prefix}tomp3`,`${prefix}tovn`,`${prefix}tourl`,`${prefix}togif`,`${prefix}tomp4`,`${prefix}toimage`,`${prefix}quotes`,`${prefix}inspect`,`${prefix}getname`,`${prefix}nulis`,`${prefix}kalkulator`,`${prefix}quoted`,`${prefix}join`,`${prefix}tohuruf`,`${prefix}volume`,`${prefix}bass`,`${prefix}blown`,`${prefix}deep`,`${prefix}earrape`,`${prefix}fast`,`${prefix}fat`,`${prefix}nightcore`,`${prefix}reverse`,`${prefix}robot`,`${prefix}slow`,`${prefix}tupai`,`${prefix}translate`,`${prefix}halah`,`${prefix}hilih`,`${prefix}huluh`,`${prefix}holoh`,`${prefix}math`,`${prefix}tictactoe`,`${prefix}delttt`,`${prefix}tebakgambar`,`${prefix}family100`,`${prefix}suitpvp`,`${prefix}3dbox`,`${prefix}roadwarning`,`${prefix}icecold`,`${prefix}luxury`,`${prefix}cloud`,`${prefix}summersand`,`${prefix}horrorblood`,`${prefix}thunder`,`${prefix}pornhub`,`${prefix}glitch`,`${prefix}avenger`,`${prefix}space`,`${prefix}ninjalogo`,`${prefix}marvelstudio`,`${prefix}lionlogo`,`${prefix}wolflogo`,`${prefix}steel3d`,`${prefix}wallgravity`,`${prefix}merdeka-news`,`${prefix}kontan-news`,`${prefix}cnbc-news`,`${prefix}tribun-news`,`${prefix}indozone-news`,`${prefix}kompas-news`,`${prefix}detik-news`,`${prefix}daily-news`,`${prefix}inews-news`,`${prefix}okezone-news`,`${prefix}sindo-news`,`${prefix}tempo-news`,`${prefix}antara-news`,`${prefix}cnn-news`,`${prefix}fajar-news`,`${prefix}setcmd`,`${prefix}listcmd`,`${prefix}delcmd`,`${prefix}lockcmd`,`${prefix}addmsg`,`${prefix}listmsg`,`${prefix}getmsg`,`${prefix}getmsg`,`${prefix}delmsg`,`${prefix}addlist`,`${prefix}dellist`,`${prefix}updatelist`,`${prefix}list`,`${prefix}owner`,`${prefix}listpc`,`${prefix}listgc`,`${prefix}mcserver`,`${prefix}sc`,`${prefix}ping`,`${prefix}afk`,`${prefix}cekupdate`,`${prefix}getscmd`,`${prefix}delete`,`${prefix}infochat`,`${prefix}request`,`${prefix}report`,`${prefix}donate`,`${prefix}listonline`,`${prefix}self`,`${prefix}sewa`,`${prefix}listsewa`,`${prefix}public`,`${prefix}bcall`,`${prefix}bcgroup`,`${prefix}chat`,`${prefix}antitag`,`${prefix}ban`,`${prefix}cowner`,`${prefix}doge`,`${prefix}catalog`,`${prefix}mute`,`${prefix}attp`,`${prefix}patrick`,`${prefix}patrik`,`${prefix}bucinsticker`,`${prefix}gura`,`${prefix}gurastick`,`${prefix}tebakgambar`,`${prefix}kuismath`,`${prefix}tebakkimia`,`${prefix}asahotak`,`${prefix}tebakkalimat`,`${prefix}susunkata`,`${prefix}caklontong`,`${prefix}tekateki`,`${prefix}tebakkabupaten`,`${prefix}tebakanime`,`${prefix}tebakbendera`,`${prefix}waifu`,`${prefix}awoo`,`${prefix}megumin`,`${prefix}neko`,`${prefix}shinobu`,`${prefix}bully`,`${prefix}hug`,`${prefix}cuddle`,`${prefix}cry`,`${prefix}kiss`,`${prefix}lick`,`${prefix}pat`,`${prefix}bonk`,`${prefix}yeet`,`${prefix}latintoaksara`,`${prefix}aksaratolatin`,`${prefix}jadwaltv`,`${prefix}whatmusic`,`${prefix}gempa`,`${prefix}gempaNow`,`${prefix}topup`,`${prefix}expand`,`${prefix}bioskop`,`${prefix}bioskopnow`,`${prefix}mlstalk`,`${prefix}ffstalk`,`${prefix}supersusstalk`,`${prefix}emojimix2`,`${prefix}verify`,`${prefix}command`]
 const isCmd = body.startsWith(prefix)
 const command = body.toLowerCase().split(' ')[0] || ''
@@ -196,6 +196,7 @@ const groupOwner = m.isGroup ? groupMetadata.owner : ''
 const isBotAdmins = m.isGroup ? groupAdmins.includes(botNumber) : false
 const isAdmins = m.isGroup ? groupAdmins.includes(m.sender) : false
 const isSewa = _sewa.checkSewaGroup(from, sewa)
+const isRegister = register.includes(m.sender)
 const groupMembers = m.isGroup ? groupMetadata.participants : ''
 const cmdBotTotal = require('util').inspect(hit.all)
 const cmdBotHarian = require('util').inspect(hit.today)
@@ -241,7 +242,7 @@ const reSize = async(buffer, ukur1, ukur2) => {
     })
 }
 butCmd = [ { index: 1,  urlButton: { displayText: 'My Github',  url: 'https://github.com/' } } ]
-
+butCmd2 = [ { index: 1,  quickReplyButton: { displayText: 'Daftar', id: 'verify'} } ]
 const configocr = {
     lang: "eng",
     oem: 1,
@@ -270,34 +271,31 @@ const reactionMessage = {
                         text: args[0],
                         key: { remoteJid: m.chat, fromMe: true, id: quoted.id }
                     }
-                }
-//Register Function ======================================================
-let addRegisterUser = (userid) => {
-	let obj = { id: userid }
-	register.push(obj)
-	fs.writeFileSync('./worker/src/register/user.json', JSON.stringify(register))
-	}
-	
-let cekUser = (sender) => {
-	let status = false
-	Object.keys(register).forEach((i) => {
-		if (register[i].id === sender) {
-			status = true
-			}
-			})
-			return status
-			}
-let cekCapuser = (sender) => {
-	let status = false
-	Object.keys(capuser).forEach((i) => {
-		if (capuser[i].id === sender) {
-			status = true
-			}
-			})
-			return status
-			}
-const isRegister = cekUser(sender)
-const isCapuser = cekCapuser(sender)
+                  }
+//======================================================
+const getRegisteredRandomId = () => {
+  return _registered[Math.floor(Math.random() * _registered.length)].id
+}
+const addRegisteredUser = (userid, sender, age, time, serials) => {
+  const obj = { id: userid, name: sender, age: age, time: time, serial: serials }
+  _registered.push(obj)
+  fs.writeFileSync('./worker/src/register/user.json', JSON.stringify(_registered))
+}
+
+const checkRegisteredUser = (sender) => {
+  let status = false
+  Object.keys(_registered).forEach((i) => {
+      if (_registered[i].id === sender) {
+          status = true
+      }
+  })
+  return status
+}
+const createSerial = (size) => {
+  return crypto.randomBytes(size).toString('hex').slice(0, size)
+}
+const serialUser = createSerial(18)
+let isRegistered = checkRegisteredUser(m.sender)
 //Checker======================================================
 _sewa.expiredCheck(sock, sewa)
 if (isMuted && !isAdmins){ return }
@@ -305,66 +303,96 @@ if (isMuted && !isAdmins){ return }
 //Random menu======================================================
 men = ['wpmobile','wpmobile2','wpmobile3','wpmobile4','wpmobile5']
 rndmmenu =  men[Math.floor(Math.random() * (men.length))]
-tamnel = await reSize(`./worker/media/image/randomMenu/${rndmmenu}.png`, 200, 200) 
-
+tamnel = await reSize(`./worker/media/image/randomMenu/${rndmmenu}.png`, 200, 200)
+ try {
+  pporgs = await sock.profilePictureUrl(from, 'image')
+  } catch {
+  pporgs = 'https://i0.wp.com/www.gambarunik.id/wp-content/uploads/2019/06/Top-Gambar-Foto-Profil-Kosong-Lucu-Tergokil-.jpg'
+  } 
+pic = await reSize(pporgs, 200, 200) 
 
 //Cmd Function======================================================
 
 // console log command ketika dalam private chat
     if (!m.isGroup && isCmd) {
       console.log("‣", bgcolor('Command On PRIVATE CHAT', 'magenta'));
-      console.log(" From :", color(pushname, "yellow"), "T=anggal :", bgcolor(jangwak, 'grey'));
+      console.log(" From :", color(pushname, "yellow"), "Tanggal :", bgcolor(jangwuk, 'grey'));
       console.log(" Command :", color(command.toLowerCase(), "orange"), "MessageType :", bgcolor(m.mtype, "orange"));
     }
     
 // console log command ketika dalam group
     if (m.isGroup && isCmd) {
       console.log("‣", bgcolor('Command On', 'magenta'), "GROUP", color(groupName, "orange"));
-      console.log(" From :", color(pushname, "yellow"), "Tanggal :", bgcolor(jangwak, 'grey'));
+      console.log(" From :", color(pushname, "yellow"), "Tanggal :", bgcolor(jangwuk, 'grey'));
       console.log(" Command :", color(command.toLowerCase(), "orange"), "MessageType :", bgcolor(m.mtype, "orange"));
     }
 
-if (command) {
-await sock.sendPresenceUpdate('composing', m.chat)
-sock.sendReadReceipt(from, m.sender, [m.key.id])
-}
-if (command === prefix+'verify') {
-if (isRegister) return ('Kamu Sudah Daftar') 
-//if (isCapuser) return sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi'})  //By Deff
- datta = captcha
- jsonData = JSON.parse(datta);
-    de = Math.floor(Math.random() * jsonData.length);
-    data = jsonData[de];
-   console.log(data)//hasil di tampilkan di cmd
-    jawaban = data.kode
-    gambar = data.captcha
-capuser[m.sender.split('@')[0]] = { user: sender, jawaban: jawaban.toLowerCase()}  
-  fs.writeFileSync("./worker/src/captcha/capuser.json", JSON.stringify(capuser))
+    const daftar1 = `${ucapanWaktu} kak ${m.pushName} \n\nSebelum Menggunakan Botz Verify Terlebih Dahulu Ya `
+    const daftar2 = 'Bagi Yang Pake WA Mod Ketik verify\nCreated By Aka'
 
-          
-        sock.sendMessage(
-         sender, 
-         { 
-         caption: `*Hello ${pushname}*\nSilahkan Daftar dulu\nSebutkan kode Verifikasi diatas ini`, 
-         location: { 
-          jpegThumbnail: await reSize(gambar, 200, 200) 
-         }, 
-         footer: 'AKAbotz ~ Aka', mentions: [sender] 
-         })
-sock.sendMessage(from, { text : 'Cek pesan pribadi bot'}, { quoted : m}) 
-sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi\nKode ini berlaku hingga 30 detik\nJika telat ketik #verify untuk daftar ulang/Reset code'}) 
-         return
-       }
-       
-if (capuser.hasOwnProperty(m.sender.split('@')[0]) && !isCmd ) {
-jawaban = capuser[sender.split('@')[0]].jawaban
-if (budy.toLowerCase() == jawaban) {
-addRegisterUser(sender)
-m.reply('Sukses Mendaftar') }
-await sleep(30000) 
-delete capuser[m.sender.split('@')[0]]
-fs.writeFileSync("./worker/src/captcha/capuser.json", JSON.stringify(capuser))
-}  
+    if (command.includes(body)){
+        if(!isRegistered) return sock.send5Loc(from, daftar1, daftar2, pic, butCmd2) 
+    }
+  // Daftar
+  if ('verify'.includes(body)){
+  if (isRegistered) return 
+  //if (isCapuser) return sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi'})  //By Deff*/
+   datta = captcha
+   jsonData = JSON.parse(datta);
+      de = Math.floor(Math.random() * jsonData.length);
+      data = jsonData[de];
+     console.log(data)//hasil di tampilkan di cmd
+      jawaban = data.kode
+      gambar = data.captcha
+    fs.writeFileSync("./worker/src/captcha/capuser.json", JSON.stringify(capuser))
+  
+            
+          sock.sendMessage(
+           sender, 
+           { 
+           caption: `*Hello ${pushname}*\nSilahkan Daftar dulu\nSebutkan kode Verifikasi diatas ini`, 
+           location: { 
+            jpegThumbnail: await reSize(gambar, 200, 200) 
+           }, 
+           footer: 'AKAbotz ~ Aka', mentions: [sender] 
+           })
+  sock.sendMessage(from, { text : 'Cek pesan pribadi bot'}, { quoted : m}) 
+  sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi\nKode ini berlaku hingga 15 detik\nJika telat ketik #verify untuk daftar ulang/Reset code'}, { quoted : m}).then(() => {
+    capuser[m.sender.split('@')[0]] = jawaban.toLowerCase()
+    addCmd(command.slice(1), 1, commund)
+    })
+  }
+
+    if (capuser.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+    jawaban = capuser[m.sender.split('@')[0]]
+if (jawaban.includes(body)){
+      delete capuser[m.sender.split('@')[0]]
+  if (isRegistered) return ads('Akun Kamu Sudah Terverify! Jangan Daftar Lagi!')
+  _registered.push(m.sender)
+	    fs.writeFileSync('./worker/src/register/user.json', JSON.stringify(_registered))
+  addRegisteredUser(m.sender, m.pushName, serialUser)
+  const anuu = `
+*Terimakasih Sudah Mendaftarkan Diri Dalam Database Raki Bot WhatsApp*
+┌─❑ _*「 PENDAFTARAN USER 」*_
+│ 
+├❏ _*Nama : ${pushname}*_
+├❏ _*API : wa.me/${m.sender.split('@')[0]}*_
+├❏ _*Serial:* ${serialUser}*_
+├❏ _*Total:* ${_registered.length} Pengguna*_
+└─❑ _*「 Aka Botz 」*_`
+let buttons = [
+  {buttonId: `.menu`, buttonText: {displayText: '🏷️MENU'}, type: 1},
+  ]
+  let buttonMessage = {
+  image: pic,
+  caption: anuu,
+  footer: global.author,
+  buttons: buttons,
+  headerType: 4, contextInfo: {"externalAdReply": { title: "WHATSAPP BOT",mediaType: 3, renderLargerThumbnail: false , showAdAttribution: true, body: "🤫",jpegThumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),mediaUrl: global.linkgrupss, thumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),sourceUrl: global.linkgrupss }}
+  }
+  sock.sendMessage(m.chat, buttonMessage, { quoted: m })
+}
+    }
 
 if (bad.includes(body)) {
 tos = ['Astaghfirullah','Heh mulut jaga','Gapernah diajarin cara ngomong?','Dih🤢','Toxic teross']
@@ -372,6 +400,7 @@ sin =  tos[Math.floor(Math.random() * (tos.length))]
 m.reply(sin) 
 }
 
+       
 // Rakyat
 if (!isRakyat) {
 rkyt.push(m.sender.split("@")[0])
@@ -504,11 +533,12 @@ timezone: "Asia/Jakarta"
 })
 
 
+
 if (('family100'+m.chat in _family100) && isCmd) {
 kuis = true
 let room = _family100['family100'+m.chat]
 let teks = budy.toLowerCase().replace(/[^\w\s\-]+/, '')
-let isSurender = /^((me)?nyerah|surr?ender)$/i.test(m.text)
+let isSurender = /^((me)?nyerah|surr?ender)$/.test(m.text)
 if (!isSurender) {
 let index = room.jawaban.findIndex(v => v.toLowerCase().replace(/[^\w\s\-]+/, '') === teks)
 if (room.terjawab[index]) return !0
@@ -676,23 +706,16 @@ delete this.game[room.id]
 }
 //Function Tebak
 //======================================================
-if (_tbkkimia.hasOwnProperty(m.sender.split('@')[0]) && !isCmd && !m.key.fromMe) {
-let jawaban = _tbkkimia[m.sender.split('@')[0]].jawaban
-if (budy.toLowerCase() == 'nyerah') { 
-await reply('Yahaaa Cupu nyerah') 
-delete _tebakkimia[m.sender.split('@')[0]]
-fs.writeFileSync("./worker/src/game/dbgame/tebakkimia.json", JSON.stringify(_tbkkimia))
-return
-}
-if (budy.toLowerCase() == jawaban) {
-const sections = [ { title: "Game", rows: [ {title: "Tebak Gambar", rowId: "#tebakgambar", description: "Game Tebak Gambar"},{title: "Tebak Kimia", rowId: "#tebakkimia", description: "Game Tebak Kimia"},{title: "Asah Otak", rowId: "#asahotak", description: "Game Asahotak"}, {title: "Susun Kata", rowId: "#susunkata", description: "Game Susunkata"},{title: "Tebak Kalimat", rowId: "#tebakkalimat", description: "Game Tebak Kalimat"}, {title: "Teka Teki", rowId: "#tekateki", description: "Teka Teki"},{title: "Cak Lontong", rowId: "#caklontong", description: "Game Cak Lontong"}, { title: "Tebak Anime", rowId: "#tebakanime", description: "Game Tebak Anime"}, {title: "Tebak Kabupaten", rowId: "#tebakkabupaten", description: "Game Tebak Kabupaten"}, {title: "Tebak Bendera", rowId: "#tebakbendera", description: "Game Tebak Bendera"}, {title: "Tebak Lagu", rowId: "#tebaklagu", description: "Game Tebak Lagu"}, {title: "Tebak Lirik", rowId: "#tebaklirik", description: "Game Tebak Lirik"}, ]}    ]
+if (_tbkkimia.hasOwnProperty(sender.split('@')[0]) && !isCmd) {
+  kuis = true
+  jawaban = _tbkkimia[sender.split('@')[0]]
+  if (budy.toLowerCase() == jawaban) {
+      const sections = [ { title: "Game", rows: [ {title: "Tebak Gambar", rowId: "#tebakgambar", description: "Game Tebak Gambar"},{title: "Tebak Kimia", rowId: "#tebakkimia", description: "Game Tebak Kimia"},{title: "Asah Otak", rowId: "#asahotak", description: "Game Asahotak"}, {title: "Susun Kata", rowId: "#susunkata", description: "Game Susunkata"},{title: "Tebak Kalimat", rowId: "#tebakkalimat", description: "Game Tebak Kalimat"}, {title: "Teka Teki", rowId: "#tekateki", description: "Teka Teki"},{title: "Cak Lontong", rowId: "#caklontong", description: "Game Cak Lontong"}, { title: "Tebak Anime", rowId: "#tebakanime", description: "Game Tebak Anime"}, {title: "Tebak Kabupaten", rowId: "#tebakkabupaten", description: "Game Tebak Kabupaten"}, {title: "Tebak Bendera", rowId: "#tebakbendera", description: "Game Tebak Bendera"}, {title: "Tebak Lagu", rowId: "#tebaklagu", description: "Game Tebak Lagu"}, {title: "Tebak Lirik", rowId: "#tebaklirik", description: "Game Tebak Lirik"}, ]}    ]
 const listMessage = {text: global.game ,footer: `Selamat jawaban kamu benar🥳🎉`, title: "List Game",buttonText: "Play Again",sections}
 const sendm =  sock.sendMessage( from, listMessage, {quoted :m })
 delete _tbkkimia[m.sender.split('@')[0]]
 fs.writeFileSync("./worker/src/game/dbgame/tebakkimia.json", JSON.stringify(_tbkkimia))
-} else { if(sim(budy.toLowerCase(), jawaban) >= threshold) m.reply('Jawaban kamu hampir benar')
-else m.reply('Salah')
-}
+  }
 }
 //======================================================
 if (_asahotak.hasOwnProperty(m.sender.split('@')[0]) && !isCmd && !m.key.fromMe) {
@@ -715,23 +738,23 @@ else m.reply('Salah')
 }
 //======================================================
 if (_susunkata.hasOwnProperty(m.sender.split('@')[0]) && !isCmd && !m.key.fromMe) {
-let jawaban = _susunkata[m.sender.split('@')[0]].jawaban
-if (budy.toLowerCase() == 'nyerah') { 
-await reply('Yahaaa Cupu nyerah') 
-delete _susunkata[m.sender.split('@')[0]]
-fs.writeFileSync("./worker/src/game/dbgame/susunkata.json", JSON.stringify(_susunkata))
-return
-}
-if (budy.toLowerCase() == jawaban) {
-const sections = [ { title: "Game", rows: [ {title: "Tebak Gambar", rowId: "#tebakgambar", description: "Game Tebak Gambar"},{title: "Tebak Kimia", rowId: "#tebakkimia", description: "Game Tebak Kimia"},{title: "Asah Otak", rowId: "#asahotak", description: "Game Asahotak"}, {title: "Susun Kata", rowId: "#susunkata", description: "Game Susunkata"},{title: "Tebak Kalimat", rowId: "#tebakkalimat", description: "Game Tebak Kalimat"}, {title: "Teka Teki", rowId: "#tekateki", description: "Teka Teki"},{title: "Cak Lontong", rowId: "#caklontong", description: "Game Cak Lontong"}, { title: "Tebak Anime", rowId: "#tebakanime", description: "Game Tebak Anime"}, {title: "Tebak Kabupaten", rowId: "#tebakkabupaten", description: "Game Tebak Kabupaten"}, {title: "Tebak Bendera", rowId: "#tebakbendera", description: "Game Tebak Bendera"}, {title: "Tebak Lagu", rowId: "#tebaklagu", description: "Game Tebak Lagu"}, {title: "Tebak Lirik", rowId: "#tebaklirik", description: "Game Tebak Lirik"}, ]}    ]
-const listMessage = {text: global.game ,footer: `Selamat jawaban kamu benar🥳🎉`, title: "List Game",buttonText: "Play Again",sections}
-const sendm =  sock.sendMessage( from, listMessage, {quoted :m })
-delete _susunkata[m.sender.split('@')[0]]
-fs.writeFileSync("./worker/src/game/dbgame/susunkata.json", JSON.stringify(_susunkata))
-} else { if(sim(budy.toLowerCase(), jawaban) >= threshold) m.reply('Jawaban kamu hampir benar')
-else m.reply('Salah')
-}
-}
+  let jawaban = _susunkata[m.sender.split('@')[0]].jawaban
+  if (budy.toLowerCase() == 'nyerah') { 
+  await reply('Yahaaa Cupu nyerah') 
+  delete _susunkata[m.sender.split('@')[0]]
+  fs.writeFileSync("./worker/src/game/dbgame/susunkata.json", JSON.stringify(_susunkata))
+  return
+  }
+  if (budy.toLowerCase() == jawaban) {
+  const sections = [ { title: "Game", rows: [ {title: "Tebak Gambar", rowId: "#tebakgambar", description: "Game Tebak Gambar"},{title: "Tebak Kimia", rowId: "#tebakkimia", description: "Game Tebak Kimia"},{title: "Asah Otak", rowId: "#asahotak", description: "Game Asahotak"}, {title: "Susun Kata", rowId: "#susunkata", description: "Game Susunkata"},{title: "Tebak Kalimat", rowId: "#tebakkalimat", description: "Game Tebak Kalimat"}, {title: "Teka Teki", rowId: "#tekateki", description: "Teka Teki"},{title: "Cak Lontong", rowId: "#caklontong", description: "Game Cak Lontong"}, { title: "Tebak Anime", rowId: "#tebakanime", description: "Game Tebak Anime"}, {title: "Tebak Kabupaten", rowId: "#tebakkabupaten", description: "Game Tebak Kabupaten"}, {title: "Tebak Bendera", rowId: "#tebakbendera", description: "Game Tebak Bendera"}, {title: "Tebak Lagu", rowId: "#tebaklagu", description: "Game Tebak Lagu"}, {title: "Tebak Lirik", rowId: "#tebaklirik", description: "Game Tebak Lirik"}, ]}    ]
+  const listMessage = {text: global.game ,footer: `Selamat jawaban kamu benar🥳🎉`, title: "List Game",buttonText: "Play Again",sections}
+  const sendm =  sock.sendMessage( from, listMessage, {quoted :m })
+  delete _susunkata[m.sender.split('@')[0]]
+  fs.writeFileSync("./worker/src/game/dbgame/susunkata.json", JSON.stringify(_susunkata))
+  } else { if(sim(budy.toLowerCase(), jawaban) >= threshold) m.reply('Jawaban kamu hampir benar')
+  else m.reply('Salah')
+  }
+  }
 //======================================================
 if (_tebakkalimat.hasOwnProperty(m.sender.split('@')[0]) && !isCmd && !m.key.fromMe) {
 let jawaban = _tebakkalimat[m.sender.split('@')[0]].jawaban
@@ -1104,23 +1127,40 @@ Pendaftar : ${register.length} Orang
 // Case Nye Sini Ngab
 switch(command) {
 
-case prefix+'ownermenu':{ sock.send5Loc(from, ownerMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'othermenu':{ sock.send5Loc(from, otherMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'storagemenu':{ sock.send5Loc(from, storagemenu(), global.footer, tamnel, butCmd) } break
-case prefix+'randomtext':{ sock.send5Loc(from, randomtextMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'convertmenu':{ sock.send5Loc(from, convertMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'searchmenu':{ sock.send5Loc(from, searchMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'downloadmenu':{ sock.send5Loc(from, downloadmenu(), global.footer, tamnel, butCmd) } break
-case prefix+'grupmenu':{ sock.send5Loc(from, grupMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'toolsmenu':{ sock.send5Loc(from, toolsMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'funmenu':{ sock.send5Loc(from, funMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'stickertelegram':{ sock.send5Loc(from, stickerTelegramMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'infomenu':{ sock.send5Loc(from, infoMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'textpromenu':{ sock.send5Loc(from, textproMenu(), global.footer, tamnel, butCmd) } break
-case prefix+'animemenu':{ sock.send5Loc(from, animeMenu(), global.footer, tamnel, butCmd) } break 
-case prefix+'storemenu':{ sock.send5Loc(from, storeMenu(), global.footer, tamnel, butCmd) } break 
-case prefix+'stalkmenu':{ sock.send5Loc(from, stalkMenu(), global.footer, tamnel, butCmd) } break 
-//case prefix+' ':{ sock.send5Loc(from, (), global.footer, tamnel, butCmd) } break //Buat nanti
+case prefix+'ownermenu':{ sock.send5Loc(from, ownerMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'othermenu':{ sock.send5Loc(from, otherMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'storagemenu':{ sock.send5Loc(from, storagemenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'randomtext':{ sock.send5Loc(from, randomtextMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'convertmenu':{ sock.send5Loc(from, convertMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'searchmenu':{ sock.send5Loc(from, searchMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'downloadmenu':{ sock.send5Loc(from, downloadMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'grupmenu':{ sock.send5Loc(from, grupMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'toolsmenu':{ sock.send5Loc(from, toolsMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'funmenu':{ sock.send5Loc(from, funMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'stickertelegram':{ sock.send5Loc(from, stickerTelegramMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'infomenu':{ sock.send5Loc(from, infoMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'textpromenu':{ sock.send5Loc(from, textproMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break
+case prefix+'animemenu':{ sock.send5Loc(from, animeMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break 
+case prefix+'storemenu':{ sock.send5Loc(from, storeMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break 
+case prefix+'stalkmenu':{ sock.send5Loc(from, stalkMenu(), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break 
+//case prefix+' ':{ sock.send5Loc(from, (), global.footer, tamnel, butCmd) } addCmd(command.slice(1), 1, commund)
+break //Buat nanti
 case prefix+'command' : {
 let sections = []
 let listmenu = [`grupmenu`,`textpromenu`,`stickertelegram`,`convertmenu`,`searchmenu`,`downloadmenu`,`storemenu`,`randomtext`,`stalkmenu`,`animemenu`,`funmenu`,`infomenu`,`toolsmenu`,`storagemenu`,`ownermenu`,`othermenu`]
@@ -1153,6 +1193,7 @@ sections,
 mentions:[m.sender]
 }, { quoted : m })
 }
+addCmd(command.slice(1), 1, commund)
 break
 
 case prefix+'whatmusic':{ //Ngambil Dari mans :v
@@ -1199,6 +1240,7 @@ uios = await latinToAksara(q)
 reply(uios) 
 addCmd(command.slice(1), 1, commund)
 }
+addCmd(command.slice(1), 1, commund)
 break
 case prefix+'aksaratolatin':{
 if (!q) return reply(`Example : ${command} ꦪꦺꦴꦲꦺꦴ`) 
@@ -1310,23 +1352,16 @@ if (/yeet/.test(command)) heriWibu = await fetchJson(`https:/\/\waifu.pics/api/s
 let buttons = [ { buttonId: `${command}`,  buttonText: { displayText: 'Next' }, type: 1}, ]
 let buttonMessage = { image: { url: heriWibu.url }, caption: global.resultwibu, footer: global.footer,buttons: buttons, headerType: 4}
 sock.sendMessage(from, buttonMessage, { quoted: m }) } 
-addCmd(command.slice(1), 1, commund) 
+addCmd(command.slice(1), 1, commund)
 break
-
-/*case prefix+'verify':{
- if (verify.hasOwnProperty(m.sender.split('@')[0])) return reply("Masih ada permainan yang sedang berlangsung")
- if (isRegister) return ads('Sudah Terdaftar') 
-   
-  sock.sendMessage(from, { image: { url: gambar }, caption: teks }, { quoted: m })
- 
-    }*/
 /*case prefix+'addupdate':
              if (!isCreator) return m.reply('Khusus Owner')
              if (!q) return m.reply(`Example: ${command} update fitur`)
            changelog.push(q)
              fs.writeFileSync('./worker/src/changelog/change.json', JSON.stringify(changelog))
              ads(`Update fitur berhasil ditambahkan ke database!`)
-             break
+             addCmd(command.slice(1), 1, commund)
+break
       
 
       case  prefix+'update':
@@ -1335,7 +1370,8 @@ break
              updateList += `࿃ *${i.replace(changelog)}*\n\n`
 }
              ads(updateList)
-             break*/
+             addCmd(command.slice(1), 1, commund)
+break*/
 case prefix+'emojimix2': {
 if (isBan) return m.reply(mess.ban)
 if (!args.join(" ")) return m.reply(`Example : ${command} 😅`)
@@ -1395,7 +1431,8 @@ case prefix+'mute':
                } else {
                ads(`Pilih enable atau disable`)
 }
-               break
+               addCmd(command.slice(1), 1, commund)
+break
 case prefix+"modeprefix":
 if (!isCreator) return ads('Khusus Owner') 
         if (!args.length) return ads(`Opsi prefix\n\n- noprefix\n- multi\n\n- oneprefix\n\nExample : ${prefix}prefix noprefix`)
@@ -1410,14 +1447,16 @@ if (!isCreator) return ads('Khusus Owner')
         } else {
           ads("pilih multi, atau oneprefix")
         }
-        break
+        addCmd(command.slice(1), 1, commund)
+break
         case prefix+"setprefix":
           if (!q) return ads("Prefix nya mau apa?")
           multipref = false;
           noprefix = false;
           oneprefix = true;
           preff = q
-          break
+          addCmd(command.slice(1), 1, commund)
+break
 case prefix+'setppbott':
             if (quoted) {
                 var media = await sock.downloadAndSaveMediaMessage(quoted)
@@ -1448,7 +1487,8 @@ case prefix+'setppbott':
             } else {
                 ads(`Kirim/balas gambar dengan caption ${command} untuk mengubah foto profil bot`)
             }
-            break
+            addCmd(command.slice(1), 1, commund)
+break
 case prefix+'gura':
 case prefix+'gurastick':{
 var ano = await fetchJson('https://raw.githubusercontent.com/rashidsiregar28/data/main/gura')
@@ -1528,7 +1568,7 @@ case prefix+'list':
             }
             sock.sendMessage(from, listMsg)
 addCmd(command.slice(1), 1, commund)
-            break
+break
         case prefix+'addlist':
             if (!m.isGroup) return m.reply('Khusus Grup')
             if (!isAdmins && !isCreator) return m.reply(mess.admin)
@@ -1548,7 +1588,7 @@ addCmd(command.slice(1), 1, commund)
                 m.reply(`Sukses set list message dengan key : *${args1}*`)
             }
             addCmd(command.slice(1), 1, commund)
-            break
+break
         case prefix+'dellist':
             if (!m.isGroup) return m.reply('Khusus Grup')
             if (!isAdmins && !isCreator) return m.reply(mess.admin)
@@ -1558,7 +1598,7 @@ addCmd(command.slice(1), 1, commund)
             delResponList(from, q, db_respon_list)
             m.reply(`Sukses delete list message dengan key *${q}*`)
             addCmd(command.slice(1), 1, commund)
-            break
+break
         case prefix+'updatelist': 
             if (!m.isGroup) return m.reply('Khusus Grup')
             if (!isAdmins && !isCreator) return m.reply(mess.admin)
@@ -1577,7 +1617,7 @@ addCmd(command.slice(1), 1, commund)
                 m.reply(`Sukses update respon list dengan key *${args1}*`)
             }
             addCmd(command.slice(1), 1, commund)
-            break
+break
             
 case prefix+'dashboard': {
 if (isBan) return reply(mess.ban)
@@ -1594,6 +1634,7 @@ break
 case prefix+'tes':
 ads('y') 
 
+addCmd(command.slice(1), 1, commund)
 break
 case prefix+'fajar-news':
 FajarNews().then(async(res) => {
@@ -2491,10 +2532,12 @@ contextInfo: {
 }
 
 sock.sendMessage(m.chat, buttonMessage, { quoted: m}) 
-				 break
+				 addCmd(command.slice(1), 1, commund)
+break
 case prefix+'how':
   teks = 'howw'
   sock.sendMessage(from, { text : teks, contextInfo: {"externalAdReply": { title: "WHATSAPP BOT",mediaType: 3, renderLargerThumbnail: false , showAdAttribution: true, body: "🤫",jpegThumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),mediaUrl: global.linkgrupss, thumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),sourceUrl: global.linkgrupss }}},{ quoted : m})
+addCmd(command.slice(1), 1, commund)
 break
 /*case prefix+'menu': { Ini Menu location
 const dbs = new Database()
@@ -2592,6 +2635,35 @@ delete this.suit[id]
 }
 addCmd(command.slice(1), 1, commund)
 break
+/*case prefix+'verify': {
+  if (capuser.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada pendaftaran yang sedang berlangsung") 
+  if (!isRegistered) return ads('Akun Kamu Sudah Terverify! Jangan Daftar Lagi!')
+  //if (isCapuser) return sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi'})  //By Deff
+   datta = captcha
+   jsonData = JSON.parse(datta);
+      de = Math.floor(Math.random() * jsonData.length);
+      data = jsonData[de];
+     console.log(data)//hasil di tampilkan di cmd
+      jawaban = data.kode
+      gambar = data.captcha
+    fs.writeFileSync("./worker/src/captcha/capuser.json", JSON.stringify(capuser))
+  
+            
+          sock.sendMessage(
+           sender, 
+           { 
+           caption: `*Hello ${pushname}*\nSilahkan Daftar dulu\nSebutkan kode Verifikasi diatas ini`, 
+           location: { 
+            jpegThumbnail: await reSize(gambar, 200, 200) 
+           }, 
+           footer: 'AKAbotz ~ Aka', mentions: [sender] 
+           })
+  sock.sendMessage(from, { text : 'Cek pesan pribadi bot'}, { quoted : m}) 
+  sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi\nKode ini berlaku hingga 30 detik\nJika telat ketik #verify untuk daftar ulang/Reset code'}, { quoted : m}).then(() => {
+    capuser[m.sender.split('@')[0]] = jawaban.toLowerCase()
+    })}
+addCmd(command.slice(1), 1, commund)
+break*/
 case prefix+'family100': {
 if (isBan) return ads(mess.ban)
 if ('family100'+m.chat in _family100) {
@@ -2635,7 +2707,8 @@ case prefix+'tebakkabupaten':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
  case prefix+'tebakanime':{
  if (_tebakanime.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
 
@@ -2661,7 +2734,8 @@ case prefix+'tebakkabupaten':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
  case prefix+'tebakbendera':{
  if (_tebakbendera.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
@@ -2692,7 +2766,8 @@ case prefix+'tebakkabupaten':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'caklontong':{
  if (_caklontong.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
@@ -2717,7 +2792,8 @@ case prefix+'caklontong':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'tebaklagu':{
  if (_tebaklagu.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
@@ -2743,7 +2819,8 @@ await sock.sendMessage(from, { audio: {url : songs }, mimetype: 'audio/mp4', ptt
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'tebaklirik':{
  if (_tebaklirik.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
@@ -2767,7 +2844,8 @@ case prefix+'tebaklirik':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'tekateki':{
  if (_tekateki.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
@@ -2791,7 +2869,8 @@ case prefix+'tekateki':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'tebakkalimat':{
  if (_tebakkalimat.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
@@ -2816,7 +2895,8 @@ case prefix+'tebakkalimat':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'susunkata':{
  if (_susunkata.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
@@ -2841,7 +2921,8 @@ case prefix+'susunkata':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'asahotak':{
  if (_asahotak.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
@@ -2865,8 +2946,10 @@ case prefix+'asahotak':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'tebakkimia':{
+
  if (_tbkkimia.hasOwnProperty(m.sender.split('@')[0])) return m.reply("Masih ada permainan yang sedang berlangsung")
    
    let datta = tebakkimia
@@ -2877,10 +2960,11 @@ case prefix+'tebakkimia':{
    let jawaban = data.lambang
    let unsur = data.unsur
    let teks = `𝗧𝗘𝗕𝗔𝗞 𝗞𝗜𝗠𝗜𝗔\n\nLambang unsur dari ${unsur} adalah\nWaktu : ${waktu}s`
-   _tbkkimia[m.sender.split('@')[0]] = { user: m.sender, jawaban: jawaban.toLowerCase(), time: waktu }  
-  fs.writeFileSync("./worker/src/game/dbgame/tebakkimia.json", JSON.stringify(_tbkkimia))
-  sock.sendMessage(from, { text : teks}, { quoted: m })
-   await sleep(_tbkkimia[m.sender.split('@')[0]].time)
+   sock.sendMessage(from, { text : teks}, { quoted: m }).then(() => {
+   _tbkkimia[sender.split('@')[0]] = jawaban.toLowerCase()
+   fs.writeFileSync("./worker/src/game/dbgame/tebakkimia.json", JSON.stringify(_tbkkimia))
+})
+   await sleep(30000)
    if (_tbkkimia.hasOwnProperty(m.sender.split('@')[0])) {
       sock.sendMessage(from, { text: jawaban, mentions: [m.sender] },
 { quoted : m }) 
@@ -2889,7 +2973,8 @@ case prefix+'tebakkimia':{
  
     }
  }
- break
+ addCmd(command.slice(1), 1, commund)
+break
 case prefix+'ttc': case prefix+'ttt': case prefix+'tictactoe': {
 if (isBan) return ads(mess.ban)
 let TicTacToe = require("./lib/tictactoe")
@@ -3285,6 +3370,7 @@ sock.sendMessage(from, listMessage, {quoted:m})
 m.reply(`Belum ada respon message yang ditambahkan dalam list`)
 }
 }
+addCmd(command.slice(1), 1, commund)
 break
 case prefix+'fliptext': {
 if (isBan) return ads(mess.ban)
@@ -4038,7 +4124,7 @@ case prefix+'bass': case prefix+'blown': case prefix+'deep': case prefix+'earrap
                 fs.unlinkSync(media)
                 if (err) return ads(err)
                 let buff = fs.readFileSync(ran)
-                sock.sendMessage(m.chat, { audio: buff, mimetype: 'audio/mpeg' }, { quoted : m })
+                sock.sendMessage(m.chat, { audio: buff, mimetype: 'audio/mpeg', contextInfo: {"externalAdReply": { title: "WHATSAPP BOT",mediaType: 3, renderLargerThumbnail: false , showAdAttribution: true, body: "🤫",jpegThumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),mediaUrl: global.linkgrupss, thumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),sourceUrl: global.linkgrupss }} }, { quoted : m })
                 fs.unlinkSync(ran)
                 })
                 } else ads(`Balas audio yang ingin diubah dengan caption *${command}*`)
@@ -4341,9 +4427,9 @@ sock.sendMessage(m.chat, { image : { url : pporgs }, caption:`Done` }, { quoted 
 addCmd(command.slice(1), 1, commund)
 break
 case prefix+'owner': case prefix+'creator': {
-  for (let x of global.owner) {
-    sock.sendContact(from, global.owner , m)
-   }			   
+  for (let x of global.owner1) {
+    sock.sendContact(from, x.split('@s.whatsapp.net')[0], global.author, m)
+   }		   
 }
 addCmd(command.slice(1), 1, commund)
 break
@@ -4706,7 +4792,7 @@ case prefix+'tt': case prefix+'ttdl': case prefix+'tiktok': case prefix+'ttmp4':
   })
 }
 addCmd(command.slice(1), 1, commund)
-  break
+break
   case prefix+'ttaudio':{
     if (args[0].includes('--help')) return ads(examlink) 
       if (!args[0]) return ads('Linknya?')
@@ -4728,7 +4814,8 @@ addCmd(command.slice(1), 1, commund)
        })
       }
       addCmd(command.slice(1), 1, commund)
-     break
+break
+addCmd(command.slice(1), 1, commund)
 break
 case prefix+'play': case prefix+'ytplay': {
 if (isBan) return ads(mess.ban)
@@ -4900,7 +4987,11 @@ addCmd(command.slice(1), 1, commund)
 break
 // Eval Ada Disini
 default:
-if (isCmd && !m.isGroup) {  //By Deff
+
+  if (budy.includes(`Assalamualaikum`)) {
+    ads(`Waalaikumsalam`)
+    }
+/*if (isCmd && !m.isGroup) {  //By Deff
 deff =  allcmd[Math.floor(Math.random() * (allcmd.length))]
 anu = did(command, allcmd) 
 anu2 = sim(command, anu,) 
@@ -4912,7 +5003,7 @@ anu = did(command, allcmd)
 anu2 = sim(command, anu,) 
 //m.reply(`*Maksud kamu ${anu || `${deff}`}?*`) 
 let buttons = [
-  {buttonId: `${anu || `${deff}`}`, buttonText: {displayText: `${anu || `${deff}`}`}, type: 1}
+  {buttonId: `${anu || `${deff}`}`, buttonText: {displayText: `${anu || `${deff}`} ${q}`}, type: 1}
   ]
   let buttonMessage = {
   text: `*Maksud kamu ${anu || `${deff}`}?*`,
@@ -4921,8 +5012,10 @@ let buttons = [
   headerType: 2,
   }
   sock.sendMessage(from, buttonMessage, { quoted: m })
-}
-
+}*/
+if ('Assalamualaikum'.includes(body)) {
+  m.reply('waalaikumsalam') 
+  }
 if (budy.startsWith('=>')) {
 if (!isCreator) return ads(mess.owner)
 function Return(sul) {
