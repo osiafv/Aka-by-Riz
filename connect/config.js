@@ -4,6 +4,9 @@ const chalk = require("chalk")
 /*Ubah Nama & Dll Cukup Dari sini(Udah Di set biar smua nama & wm Bisa diubah dari sini) 
 Biar Newbie Gapusing ubah nama² 
 Other*/
+//-[Key]
+global.rapidkey = `463dbc2754msh0edcce776730996p15e089jsnb8a3a15ca92d`
+//------
 global.thum = fs.readFileSync("./worker/media/image/thumb.jpg")
 global.log0 = fs.readFileSync("./worker/media/image/thumb.jpg")
 global.err4r = fs.readFileSync("./worker/media/image/thumb.jpg")

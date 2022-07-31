@@ -20,8 +20,8 @@ const crypto = require("crypto")
 const { color, bgcolor } = require("./worker/lib/color")
 const { groupResponse } = require('./worker/media/group/group.js')
 
-const Store1 = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) }) //require("./worker/lib/Store.js")
-
+const Store1 = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
+//const Store1 = require("./worker/lib/Store.js")
 
 async function __START() {
     let { version, isLatest } = await fetchLatestBaileysVersion()
@@ -33,6 +33,7 @@ async function __START() {
         version
     })
 let store = Store1.bind(sock.ev)
+//let store = Store1.bind(sock)
 
 console.log(bgcolor(color('Starting','green','white'))) 
 await sleep(1000) 
@@ -142,7 +143,28 @@ sock.ev.on('group-participants.update', async (update) =>{
     })
 
     // Add Other
-   
+   /** Send List Messaage
+      *
+      *@param {*} jid
+      *@param {*} text
+      *@param {*} footer
+      *@param {*} title
+      *@param {*} butText
+      *@param [*] sections
+      *@param {*} quoted
+      */
+      sock.sendListMsg = (jid, text = '', footer = '', title = '' , butText = '', sects = [], quoted) => {
+        let sections = sects
+        var listMes = {
+        text: text,
+        footer: footer,
+        title: title,
+        buttonText: butText,
+        sections
+        }
+        sock.sendMessage(jid, listMes, { quoted: quoted })
+        }
+        
     /** Send Button 5 Image
      *
      * @param {*} jid

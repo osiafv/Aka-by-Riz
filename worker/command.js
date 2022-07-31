@@ -280,8 +280,8 @@ const reactionMessage = {
 const getRegisteredRandomId = () => {
   return _registered[Math.floor(Math.random() * _registered.length)].id
 }
-const addRegisteredUser = (userid, sender, age, time, serials) => {
-  const obj = { id: userid, name: sender, age: age, time: time, serial: serials }
+const addRegisteredUser = (userid, sender, serials) => {
+  const obj = { id: userid, name: sender, serial: serials }
   _registered.push(obj)
   fs.writeFileSync('./worker/src/register/user.json', JSON.stringify(_registered))
 }
@@ -356,6 +356,65 @@ m.reply(sin)
 }
 
      
+    // Daftar
+  /*if (`.verify`.includes(body)){
+    if (isRegistered) return ads('Akun Kamu Sudah Terverify! Jangan Daftar Lagi!')
+  //if (isCapuser) return sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi'})  //By Deff
+   datta = captcha
+   jsonData = JSON.parse(datta);
+      de = Math.floor(Math.random() * jsonData.length);
+      data = jsonData[de];
+     console.log(data)//hasil di tampilkan di cmd
+      jawaban = data.kode
+      gambar = data.captcha
+    fs.writeFileSync("./worker/src/captcha/capuser.json", JSON.stringify(capuser))
+  
+            
+          sock.sendMessage(
+           sender, 
+           { 
+           caption: `*Hello ${pushname}*\nSilahkan Daftar dulu\nSebutkan kode Verifikasi diatas ini`, 
+           location: { 
+            jpegThumbnail: await reSize(gambar, 200, 200) 
+           }, 
+           footer: 'AKAbotz ~ Aka', mentions: [sender] 
+           })
+  sock.sendMessage(from, { text : 'Cek pesan pribadi bot'}, { quoted : m}) 
+  sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi\nKode ini berlaku hingga 15 detik\nJika telat ketik #verify untuk daftar ulang/Reset code'}, { quoted : m}).then(() => {
+    capuser[m.sender.split('@')[0]] = jawaban.toLowerCase()
+    })
+    addCmd(command.slice(1), 1, commund)
+  }*/
+
+    if (capuser.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
+    jawaban = capuser[m.sender.split('@')[0]]
+if (jawaban.includes(body)){
+      delete capuser[m.sender.split('@')[0]]
+  if (isRegistered) return ads('Akun Kamu Sudah Terverify! Jangan Daftar Lagi!')
+	    fs.writeFileSync('./worker/src/register/user.json', JSON.stringify(_registered))
+  addRegisteredUser(m.sender, m.pushName, serialUser)
+  const anuu = `
+*Terimakasih Sudah Mendaftarkan Diri Dalam Database Raki Bot WhatsApp*
+┌─❑ _*「 PENDAFTARAN USER 」*_
+│ 
+├❏ _*Nama : ${pushname}*_
+├❏ _*API : wa.me/${m.sender.split('@')[0]}*_
+├❏ _*Serial:* ${serialUser}*_
+├❏ _*Total:* ${_registered.length} Pengguna*_
+└─❑ _*「 Aka Botz 」*_`
+let buttons = [
+  {buttonId: `.menu`, buttonText: {displayText: '🏷️MENU'}, type: 1},
+  ]
+  let buttonMessage = {
+  image: pic,
+  caption: anuu,
+  footer: global.author,
+  buttons: buttons,
+  headerType: 4, contextInfo: {"externalAdReply": { title: "WHATSAPP BOT",mediaType: 3, renderLargerThumbnail: false , showAdAttribution: true, body: "🤫",jpegThumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),mediaUrl: global.linkgrupss, thumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),sourceUrl: global.linkgrupss }}
+  }
+  sock.sendMessage(m.chat, buttonMessage, { quoted: m })
+}
+    }
     /*if (command.includes(body)){
         if(!isRegistered) return sock.send5Loc(from, daftar1, daftar2, pic, butCmd2) 
     }  */
@@ -1079,7 +1138,7 @@ Size Session : ${cekSes.size}
 
 ❒── 「 Database 」 ──❒
 Owner : ${owner.length} Owner
-Pendaftar : ${register.length} Orang
+Pendaftar : ${_registered.length} Orang
 \`\`\`\   
 `
 // Case Nye Sini Ngab
@@ -1154,7 +1213,6 @@ mentions:[m.sender]
 addCmd(command.slice(1), 1, commund)
 break
 case prefix+'menu': //ini Menu fake group, Masih langka
-if(!isRegistered) return sendButMessage(from, pic, daftar1, daftar2, daftar3, {quoted: m})
 sock.sendMessage(from, { react: { text: "🤩", key: m.key }})
 let buttons = [
 {buttonId: `${prefix}ping`, buttonText: {displayText: '📈𝘚𝘵𝘢𝘵𝘶𝘴'}, type: 1},
@@ -1190,45 +1248,48 @@ sock.sendMessage(m.chat, buttonMessage, { quoted: m})
 break
 
 //===========< Downloader Menu >===========
-
-case prefix+'igstory': case prefix+'instagramstory': {
+case prefix+'igstory':
   if(!isRegistered) return sock.send5Loc(from, daftar1, daftar2, pic, butCmd2) 
   if (isBan) return ads(mess.ban)
   if (!args[0]) return ads(`Example :\n${command} AKA.xyz`)
-  try {
-  hx.igstory(args[0]).then(async(resed) => {
-  ini_anu = []
-  anu_list = []
-  textbv = `*| INSTAGRAM STORY |*\n\n⭔ Username : ${resed.user.username ? resed.user.name : "undefined"}\n⭔ Followers : ${resed.user.followers}`
-  urut = 1
-  for (let i = 0; i < resed.medias.length; i++) {
-  ini_anu.push({
-   "type": resed.medias[i].fileType,
-   "url": resed.medias[i].url
-  })
-  }
-  ilod = 1
-  for (let i of ini_anu) {
-  anu_list.push({buttonId: `${prefix}ig ${i.type} ${i.url}`, buttonText: {displayText: `Media ${ilod++}`}, type: 1})
-  }
-  textbv += `\n\n_Pilih media dibawah untuk mendownload_`
-  let buttons = anu_list
-  let buttonMessage = {
-  image:log0,
-  jpegThumbnail:thum,
-  caption: textbv,
-  footer: global.footer,
-  buttons: buttons,
-  headerType: 4
-  }
-  sock.sendMessage(from, buttonMessage, {quoted:m})
-  })
-  } catch (err) {
-  ads(String(err))
-  }
-  }
+  const options = {
+    method: 'GET',
+    url: 'https://instagram-story-downloader-media-downloader.p.rapidapi.com/story/index',
+    params: {url: 'ewkharis'},
+    headers: {
+      'X-RapidAPI-Key': '463dbc2754msh0edcce776730996p15e089jsnb8a3a15ca92d',
+      'X-RapidAPI-Host': 'instagram-story-downloader-media-downloader.p.rapidapi.com'
+    }
+  };
+  var sections = [];
+  axios.request(options).then(function (res) {
+    console.log(res.data);
+         for (let i = 0; i < res.data.length; i++) { 
+          const list = {title: `Ig Story ${q}`,
+          rows: [
+              {
+               title: `Pencarian ${q} `, 
+               rowId: `#get${res.data[i].type === "Video" ? "mp4" : "jpeg"} ${res.data[i].media}`,
+               description: `💻 Type : ${res.data[i].type === "Video" ? "video 🎥" : "foto 📸"} ${i + 1}`
+              }, 
+              ]
+             }
+             sections.push(list)   
+             }
+        })
+          const sendm =  sock.sendMessage(
+              from, 
+              {
+               text: `Berikut IGSTORY ${q}`,
+               footer: global.author,
+               title: "[ IGSTORY SEARCH 🔎 ]",
+               buttonText: "Click and see search results➡️",
+               sections
+              }, { quoted : m }
+            )  
+
   addCmd(command.slice(1), 1, commund)
-  break
+         break 
   case prefix+'igdl': case prefix+'ig': case prefix+'instagram': {
   if(!isRegistered) return sock.send5Loc(from, daftar1, daftar2, pic, butCmd2) 
   if (isBan) return ads(mess.ban)
@@ -1240,7 +1301,7 @@ case prefix+'igstory': case prefix+'instagramstory': {
       url: 'https://instagram-story-downloader-media-downloader.p.rapidapi.com/index',
       params: {url: `${args[0]}`},
       headers: {
-        'X-RapidAPI-Key': '463dbc2754msh0edcce776730996p15e089jsnb8a3a15ca92d',
+        'X-RapidAPI-Key': global.rapidkey,
         'X-RapidAPI-Host': 'instagram-story-downloader-media-downloader.p.rapidapi.com'
       }
     };
@@ -1273,7 +1334,7 @@ case prefix+'igstory': case prefix+'instagramstory': {
         url: 'https://download-videos-tiktok.p.rapidapi.com/tiktok',
         params: {url: `${q}`},
         headers: {
-          'X-RapidAPI-Key': '463dbc2754msh0edcce776730996p15e089jsnb8a3a15ca92d',
+          'X-RapidAPI-Key': global.rapidkey,
           'X-RapidAPI-Host': 'download-videos-tiktok.p.rapidapi.com'
         }
       };
@@ -1314,7 +1375,7 @@ case prefix+'igstory': case prefix+'instagramstory': {
             url: 'https://download-videos-tiktok.p.rapidapi.com/tiktok',
             params: {url: `${q}`},
             headers: {
-              'X-RapidAPI-Key': '463dbc2754msh0edcce776730996p15e089jsnb8a3a15ca92d',
+              'X-RapidAPI-Key': global.rapidkey,
               'X-RapidAPI-Host': 'download-videos-tiktok.p.rapidapi.com'
             }
           };
@@ -2529,7 +2590,9 @@ case prefix+'emojimix2': {
       case prefix+'ttp': {
         if(!isRegistered) return sendButMessage(from, pic, daftar1, daftar2, daftar3, {quoted: m})
     const buff = await (`http://zekais-api.herokuapp.com/text2png?text=${encodeURIComponent(q)}&color=white`)
-    sock.sendMessage(m.chat, {sticker: buff, contextInfo: { "externalAdReply": { "title" : global.namebot, "mediaType" : 1, "renderLargerThumbnail" : false, "showAdAttribution": true, "mediaUrl": global.linkgrupss, "thumbnail": di, "sourceUrl" : global.linkgrupss }}}, {quoted: m})
+    //sock.sendMessage(m.chat, {sticker: buff, contextInfo: { "externalAdReply": { "title" : global.namebot, "mediaType" : 1, "renderLargerThumbnail" : false, "showAdAttribution": true, "mediaUrl": global.linkgrupss, "thumbnail": di, "sourceUrl" : global.linkgrupss }}}, {quoted: m})
+    encmedia = await sock.sendImageAsSticker(from, buff, m, { packname: global.packname, author: global.packname2, contextInfo: { "externalAdReply": { "title" : global.namebot, "mediaType" : 1, "renderLargerThumbnail" : false, "showAdAttribution": true, "mediaUrl": global.linkgrupss, "thumbnail": di, "sourceUrl" : global.linkgrupss }}})
+    await fs.unlinkSync(encmedia)
   }
     addCmd(command.slice(1), 1, commund)
     break
@@ -4406,6 +4469,18 @@ case prefix+'verify': {
     })}
     addCmd(command.slice(1), 1, commund)
 break
+case prefix+'listdaftar':{
+         var men = [];
+         var urut = 1
+         teks = '```「 List Daftar 」```'
+         for (let i of _registered) {
+           men.push(i.id)
+           teks +=`\n\nUrutan : ${urut++}\n*ID :* @${i.id.split("@")[0]}\n*Name* : ${i.name}`
+         }
+         sock.sendMessage(from, { text : teks, mentions:_registered.map(a => a.id)}, { quoted : m})
+        }
+           addCmd(command.slice(1), 1, commund)
+         break 
 case prefix+'delete': case prefix+'del': {
   if(!isRegistered) return sendButMessage(from, pic, daftar1, daftar2, daftar3, {quoted: m})
 if (isBan) return ads(mess.ban)
@@ -4495,17 +4570,17 @@ sock.sendMessage(m.chat, {text: teks + teks2 + teks1, mentions:[m.sender]}, {quo
 }
 addCmd(command.slice(1), 1, commund)
 break
-case prefix+'report': {
+case prefix+'pesanana': {
   if(!isRegistered) return sendButMessage(from, pic, daftar1, daftar2, daftar3, {quoted: m})
 if (isBan) return ads(mess.ban)
-if (!args.join(" ")) return ads(`Example : \n- ${command} fitur ig error min\n- ${command} user ini nyepam min`)
-teks = `*| REPORT FITUR |*`
-teks1 = `\n\nNomor : @${m.sender.split("@")[0]}\nReport : ${args.join(" ")}`
-teks2 = `\n\nSucces send to owner`
+if (!q) return ads(`Example : \n- ${command} fitur ig error min\n- ${command} user ini nyepam min`)
+teks = `*| REPORT FITUR |*\n\nNomor : @${m.sender.split("@")[0]}\nReport : ${q}\n\nSucces send to owner`
+teks1 = `*| REPORT FITUR |*\n\nNomor : @${m.sender.split("@")[0]}\nReport : ${q}\n\nPesanan`
+sock.sendMessage(m.chat, { text : teks, mentions:[m.sender]}, { quoted : m}) 
 for (let i of owner) {
-sock.sendMessage(i + "@s.whatsapp.net", {text: teks + teks1, mentions:[m.sender]}, {quoted:m})
+  sock.sendMessage(i + "@s.whatsapp.net", { text : teks1, mentions:[m.sender]}, { quoted : m})
+//sock.sendMessage(i + "@s.whatsapp.net", {text: teks , mentions:[m.sender]}, {quoted:m})
 }
-sock.sendMessage(m.chat, {text: teks + teks2 + teks1, mentions:[m.sender]}, {quoted:m})
 }
 addCmd(command.slice(1), 1, commund)
 break
@@ -4665,66 +4740,6 @@ break
 default:
 
     
-    // Daftar
-  /*if (`.verify`.includes(body)){
-    if (isRegistered) return ads('Akun Kamu Sudah Terverify! Jangan Daftar Lagi!')
-  //if (isCapuser) return sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi'})  //By Deff
-   datta = captcha
-   jsonData = JSON.parse(datta);
-      de = Math.floor(Math.random() * jsonData.length);
-      data = jsonData[de];
-     console.log(data)//hasil di tampilkan di cmd
-      jawaban = data.kode
-      gambar = data.captcha
-    fs.writeFileSync("./worker/src/captcha/capuser.json", JSON.stringify(capuser))
-  
-            
-          sock.sendMessage(
-           sender, 
-           { 
-           caption: `*Hello ${pushname}*\nSilahkan Daftar dulu\nSebutkan kode Verifikasi diatas ini`, 
-           location: { 
-            jpegThumbnail: await reSize(gambar, 200, 200) 
-           }, 
-           footer: 'AKAbotz ~ Aka', mentions: [sender] 
-           })
-  sock.sendMessage(from, { text : 'Cek pesan pribadi bot'}, { quoted : m}) 
-  sock.sendMessage(sender, { text : 'Sebutkan kode diatas untuk verifikasi\nKode ini berlaku hingga 15 detik\nJika telat ketik #verify untuk daftar ulang/Reset code'}, { quoted : m}).then(() => {
-    capuser[m.sender.split('@')[0]] = jawaban.toLowerCase()
-    })
-    addCmd(command.slice(1), 1, commund)
-  }*/
-
-    if (capuser.hasOwnProperty(m.sender.split('@')[0]) && isCmd) {
-    jawaban = capuser[m.sender.split('@')[0]]
-if (jawaban.includes(body)){
-      delete capuser[m.sender.split('@')[0]]
-  if (isRegistered) return ads('Akun Kamu Sudah Terverify! Jangan Daftar Lagi!')
-  _registered.push(m.sender)
-	    fs.writeFileSync('./worker/src/register/user.json', JSON.stringify(_registered))
-  addRegisteredUser(m.sender, m.pushName, serialUser)
-  const anuu = `
-*Terimakasih Sudah Mendaftarkan Diri Dalam Database Raki Bot WhatsApp*
-┌─❑ _*「 PENDAFTARAN USER 」*_
-│ 
-├❏ _*Nama : ${pushname}*_
-├❏ _*API : wa.me/${m.sender.split('@')[0]}*_
-├❏ _*Serial:* ${serialUser}*_
-├❏ _*Total:* ${_registered.length} Pengguna*_
-└─❑ _*「 Aka Botz 」*_`
-let buttons = [
-  {buttonId: `.menu`, buttonText: {displayText: '🏷️MENU'}, type: 1},
-  ]
-  let buttonMessage = {
-  image: pic,
-  caption: anuu,
-  footer: global.author,
-  buttons: buttons,
-  headerType: 4, contextInfo: {"externalAdReply": { title: "WHATSAPP BOT",mediaType: 3, renderLargerThumbnail: false , showAdAttribution: true, body: "🤫",jpegThumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),mediaUrl: global.linkgrupss, thumbnail: fs.readFileSync('./worker/media/image/randomMenu/wpmobile.png'),sourceUrl: global.linkgrupss }}
-  }
-  sock.sendMessage(m.chat, buttonMessage, { quoted: m })
-}
-    }
 /*if (isCmd && !m.isGroup) {  //By Deff
 deff =  allcmd[Math.floor(Math.random() * (allcmd.length))]
 anu = did(command, allcmd) 
