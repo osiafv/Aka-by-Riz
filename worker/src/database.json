@@ -264,7 +264,7 @@
     "6281292286714@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6285156476017@s.whatsapp.net": {
       "afkTime": -1,
@@ -484,7 +484,7 @@
     "6287721317870@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6281918526541@s.whatsapp.net": {
       "afkTime": -1,
@@ -564,47 +564,47 @@
     "6289517567947@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "60137711356@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6288216018165@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6285890669029@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6282111491945@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "62895355724242@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6282280609192@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6285290877652@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6281228585458@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "62895704151428@s.whatsapp.net": {
       "afkTime": -1,
@@ -614,17 +614,17 @@
     "6285791270221@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "994408465157@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6285922480867@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6281248249833@s.whatsapp.net": {
       "afkTime": -1,
@@ -634,72 +634,77 @@
     "212774658977@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "212710023126@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6288976554122@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "212614129938@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6285821857174@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "918416093656@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6285707042602@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6288989392649@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6281391530473@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "923020444512@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6283892679311@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "5212291253568@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6283133483570@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
     },
     "6288295118245@s.whatsapp.net": {
       "afkTime": -1,
       "afkReason": "",
-      "limit": 100
+      "limit": "Infinity"
+    },
+    "6288297357055@s.whatsapp.net": {
+      "afkTime": -1,
+      "afkReason": "",
+      "limit": "Infinity"
     }
   },
   "grup": {}
